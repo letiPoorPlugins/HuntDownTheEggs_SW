@@ -3,7 +3,6 @@ using HuntDownTheEggsEggs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SwiftlyS2.Shared;
-using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.Plugins;
 using HuntDownTheEggs.Api;
 

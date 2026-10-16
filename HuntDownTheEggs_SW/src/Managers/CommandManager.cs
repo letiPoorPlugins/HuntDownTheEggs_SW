@@ -16,23 +16,17 @@ public sealed class CommandManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore co
 
         var perm = _plugin.Config.EggSetup.EggRootPermission;
 
-        // Komendy adminów – uprawnienie sprawdza SwiftlyS2 (zamiast AdminManager.PlayerHasPermissions z CSS).
-        _core.Command.RegisterCommand(cfg.PlaceEggCommands[0], PlaceEgg, false, perm);
-        _core.Command.RegisterCommand(cfg.TeleportToEggCommands[0], TeleportToEgg, false, perm);
-        _core.Command.RegisterCommand(cfg.RemoveEggCommands[0], RemoveEgg, false, perm);
-        _core.Command.RegisterCommand(cfg.ReloadEggsCommands[0], ReloadEggs, false, perm);
-        _core.Command.RegisterCommand(cfg.PlacingModeCommands[0], TogglePlacingMode, false, perm);
+        Register(cfg.PlaceEggCommands, PlaceEgg, perm);
+        Register(cfg.TeleportToEggCommands, TeleportToEgg, perm);
+        Register(cfg.RemoveEggCommands, RemoveEgg, perm);
+        Register(cfg.ReloadEggsCommands, ReloadEggs, perm);
+        Register(cfg.PlacingModeCommands, TogglePlacingMode, perm);
 
-        // Komendy dla wszystkich
-        _core.Command.RegisterCommand(cfg.ShowMyEggsCommands[0], ShowMyEggs);
-        _core.Command.RegisterCommand(cfg.ShowTopEggsCommands[0], ShowTop("hdte.top_list_header", _plugin.Players.TopEggs));
-        _core.Command.RegisterCommand(cfg.ShowTopKillEggsCommands[0], ShowTop("hdte.top_kill_eggs_header", _plugin.Players.TopKillEggs));
-        _core.Command.RegisterCommand(cfg.ShowTopRandomEggsCommands[0], ShowTop("hdte.top_random_eggs_header", _plugin.Players.TopRandomEggs));
-
-        //Register(cfg.ShowTopEggsCommands, c => ShowTop(c, "hdte.top_list_header", _plugin.Players.TopEggs), null);
-        //Register(cfg.ShowTopKillEggsCommands, c => ShowTop(c, "hdte.top_kill_eggs_header", _plugin.Players.TopKillEggs), null);
-        //Register(cfg.ShowTopRandomEggsCommands, c => ShowTop(c, "hdte.top_random_eggs_header", _plugin.Players.TopRandomEggs), null);
-
+        Register(cfg.ShowMyEggsCommands, ShowMyEggs, null);
+        Register(cfg.ShowTopEggsCommands, c => ShowTop(c,"hdte.top_list_header", _plugin.Players.TopEggs), null);
+        Register(cfg.ShowTopKillEggsCommands, c => ShowTop(c,"hdte.top_kill_eggs_header", _plugin.Players.TopKillEggs), null);
+        Register(cfg.ShowTopRandomEggsCommands, c => ShowTop(c,"hdte.top_random_eggs_header", _plugin.Players.TopRandomEggs), null);
+        
         _plugin.DebugLog("Commands registered.");
     }
 
@@ -53,14 +47,20 @@ public sealed class CommandManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore co
         _plugin.DebugLog("Commands Unregistered.");
     }
 
-    private void Register(IEnumerable<string> names, ICommandService.CommandListener handler, string? permission)
-    {
-        foreach (var name in names.Where(n => !string.IsNullOrWhiteSpace(n)))
-        {
-            if (permission != null) _core.Command.RegisterCommand(name, handler, permission: permission);
-            else _core.Command.RegisterCommand(name, handler);
-        }
-    }
+	private void Register(List<string> commands, ICommandService.CommandListener handler, string? permission)
+	{
+		if (commands.Count == 0)
+			return;
+
+		var primary = commands[0];
+        if(permission != null) _core.Command.RegisterCommand(primary, handler, permission:permission);
+        else _core.Command.RegisterCommand(primary, handler);
+
+		foreach (var alias in commands.Skip(1))
+		{
+			_core.Command.RegisterCommandAlias(primary, alias);
+		}
+	}
     private void UnRegister(IEnumerable<string> names)
     {
         foreach (var name in names.Where(n => !string.IsNullOrWhiteSpace(n)))
@@ -176,6 +176,7 @@ public sealed class CommandManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore co
         _plugin.Helper.SendLines(player, l["hdte.my_eggs", data.TotalEggs, data.KillEggs, total, data.Eggs.Count, data.Map, data.RandomEggs]);
     }
 
+    /*
     private ICommandService.CommandListener ShowTop(string headerKey, Dictionary<string, int> top)
     {
         return ctx =>
@@ -202,6 +203,29 @@ public sealed class CommandManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore co
                 player.SendChat(l["hdte.top_list_player", i, name, count]);
             }
         };
+    }
+    */
+
+        private void ShowTop(ICommandContext ctx, string headerKey, Dictionary<string, int> top)
+    {
+        if (!ctx.IsSentByPlayer) return;
+        var player = ctx.Sender!;
+        var l = _core.Translation.GetPlayerLocalizer(player);
+
+        _plugin.Helper.SendLines(player, l[headerKey]);
+
+        if (top.Count == 0)
+        {
+            player.SendChat(l["hdte.prefix"] + l["hdte.no_eggs_found"]);
+            return;
+        }
+
+        var i = 0;
+        foreach (var (name, count) in top.ToList())
+        {
+            i++;
+            player.SendChat(l["hdte.top_list_player", i, name, count]);
+        }
     }
 
 

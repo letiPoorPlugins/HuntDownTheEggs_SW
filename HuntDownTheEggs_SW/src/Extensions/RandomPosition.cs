@@ -53,8 +53,6 @@ public static class NavMesh
                 return false;
             }
 
-            // The original CSS code resolves a relative address
-            // using the instruction at offset 3.
             _navMeshPtrAddress = functionAddress.Rel(3);
 
             Log($"NavMesh pointer address: 0x{_navMeshPtrAddress:X}");
