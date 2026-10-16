@@ -18,7 +18,7 @@ public sealed class Helpers(HuntDownTheEggsPlugin plugin, ISwiftlyCore core)
     public void SendLines(IPlayer player, string text)
     {
         foreach (var line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-            player.SendChat(line);
+            player.SendChatAsync(line);
     }
 
     public void NotifyCollected(IPlayer player, EggKind kind, int? eggId)

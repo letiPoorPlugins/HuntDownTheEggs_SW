@@ -19,7 +19,7 @@
   "hdte.placing_mode": "[gold]⚙ [white]Egg placement mode: {0}",
   // Player statistics
   "hdte.player_not_found": "[red]✖ [white]Your player data could not be found. Please try again shortly.",
-  "hdte.my_eggs": "[gold]✦ [white]YOUR EGG COLLECTION\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Map eggs collected: [lime]{0}\n[white]Kill eggs collected: [red]{1}\n[white]Total eggs collected: [gold]{2}\n[white]Unique eggs found: [lime]{3}\n[white]Current map: [aqua]{4}\n[white]Random eggs collected: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.my_eggs": "[gold]✦ [white]YOUR EGG COLLECTION\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Map eggs collected: [lime]{0}\n[white]Kill eggs collected: [red]{1}\n[white]Total eggs collected: [gold]{2}\n[white]Unique eggs found: [lime]{3}\n[white]Current map: [green]{4}\n[white]Random eggs collected: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
   // Leaderboards
   "hdte.top_list_header": "[gold]✦ [white]EGG HUNTERS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
   "hdte.top_kill_eggs_header": "[gold]✦ [white]KILL EGGS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",

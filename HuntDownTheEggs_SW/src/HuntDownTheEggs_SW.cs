@@ -9,7 +9,7 @@ using HuntDownTheEggs.Api;
 
 namespace HuntDownTheEggs;
 
-[PluginMetadata(Id = "HuntDownTheEggs", Version = "2.0.0", Name = "Hunt Down The Eggs", Author = "Letaryat", Description = "Egg hunting game mode - SwiftlyS2 port")]
+[PluginMetadata(Id = "HuntDownTheEggs", Version = "1.0.1", Name = "Hunt Down The Eggs", Author = "Letaryat", Description = "Egg hunting game mode - SwiftlyS2 port")]
 public sealed partial class HuntDownTheEggsPlugin : BasePlugin
 {
   public PluginConfig Config { get; private set; } = new();
@@ -70,6 +70,8 @@ public sealed partial class HuntDownTheEggsPlugin : BasePlugin
   public override void Unload()
   {
     EventManager.UnregisterEvents();
+    CommandManager.UnRegisterCommands();
+
     try { Players.SaveAllBlocking(); }
     catch (Exception ex) { Core.Logger.LogError(ex, "HuntDownTheEggs: error while saving players on unload"); }
     Core.Logger.LogInformation("HuntDownTheEggs unloaded");
@@ -79,12 +81,6 @@ public sealed partial class HuntDownTheEggsPlugin : BasePlugin
   {
     if (Config.Debug) Core.Logger.LogInformation("[HDTE] {Message}", message);
   }
-  public void SendLines(IPlayer player, string text)
-  {
-    foreach (var line in text.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-      player.SendChat(line);
-  }
-
   private string TryGetCurrentMap()
   {
     try { return Core.Engine.GlobalVars.MapName.ToString() ?? string.Empty; }

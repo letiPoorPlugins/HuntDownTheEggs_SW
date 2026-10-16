@@ -25,7 +25,7 @@
 
   // Statystyki gracza
   "hdte.player_not_found": "[red]✖ [white]Nie udało się znaleźć Twoich danych. Spróbuj ponownie za chwilę.",
-  "hdte.my_eggs": "[gold]✦ [white]TWOJA KOLEKCJA JAJEK\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Zebrane jajka z mapy: [lime]{0}\n[white]Jajka za zabójstwa: [red]{1}\n[white]Łącznie zebrane jajka: [gold]{2}\n[white]Unikalne znalezione jajka: [lime]{3}\n[white]Aktualna mapa: [aqua]{4}\n[white]Zebrane losowe jajka: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.my_eggs": "[gold]✦ [white]TWOJA KOLEKCJA JAJEK\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Zebrane jajka z mapy: [lime]{0}\n[white]Jajka za zabójstwa: [red]{1}\n[white]Łącznie zebrane jajka: [gold]{2}\n[white]Unikalne znalezione jajka: [lime]{3}\n[white]Aktualna mapa: [green]{4}\n[white]Zebrane losowe jajka: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
 
   // Rankingi
   "hdte.top_list_header": "[gold]✦ [white]ŁOWCY JAJEK — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
