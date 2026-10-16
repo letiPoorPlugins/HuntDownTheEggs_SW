@@ -24,11 +24,11 @@ public sealed class CommandManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore co
         _core.Command.RegisterCommand(cfg.PlacingModeCommands[0], TogglePlacingMode, false, perm);
 
         // Komendy dla wszystkich
-        Register(cfg.ShowMyEggsCommands, ShowMyEggs, null);
+        _core.Command.RegisterCommand(cfg.ShowMyEggsCommands[0], ShowMyEggs);
         _core.Command.RegisterCommand(cfg.ShowTopEggsCommands[0], ShowTop("hdte.top_list_header", _plugin.Players.TopEggs));
         _core.Command.RegisterCommand(cfg.ShowTopKillEggsCommands[0], ShowTop("hdte.top_kill_eggs_header", _plugin.Players.TopKillEggs));
         _core.Command.RegisterCommand(cfg.ShowTopRandomEggsCommands[0], ShowTop("hdte.top_random_eggs_header", _plugin.Players.TopRandomEggs));
-        
+
         //Register(cfg.ShowTopEggsCommands, c => ShowTop(c, "hdte.top_list_header", _plugin.Players.TopEggs), null);
         //Register(cfg.ShowTopKillEggsCommands, c => ShowTop(c, "hdte.top_kill_eggs_header", _plugin.Players.TopKillEggs), null);
         //Register(cfg.ShowTopRandomEggsCommands, c => ShowTop(c, "hdte.top_random_eggs_header", _plugin.Players.TopRandomEggs), null);
