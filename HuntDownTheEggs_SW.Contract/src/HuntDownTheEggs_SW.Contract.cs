@@ -1,4 +1,5 @@
 namespace HuntDownTheEggs.Api;
+
 public enum EggCollectionKind
 {
     Placed,
@@ -13,6 +14,22 @@ public sealed record EggCollectedEvent(
     string Map,
     EggCollectionKind Kind
 );
+
+public delegate bool EggPrizeRewardHandler(
+    ulong steamId,
+    string playerName,
+    string rewardName,
+    string rewardValue
+);
+
+public sealed record RegisteredPrizeReward(
+    Guid RegistrationId,
+    string PresentType,
+    string ProviderId,
+    string RewardName,
+    string RewardValue
+);
+
 public interface IHuntDownTheEggsApi
 {
     int GetEggCount(ulong steamId);
@@ -23,5 +40,15 @@ public interface IHuntDownTheEggsApi
 
     int GetRandomEggCount(ulong steamId);
     event Action<EggCollectedEvent>? EggCollected;
-    
+
+    Guid RegisterPrizeProvider(string presentType, string providerId, IReadOnlyDictionary<string, string> rewards, EggPrizeRewardHandler handler);
+
+    void UnregisterPrizeProvider(Guid registrationId);
+
+    IReadOnlyList<RegisteredPrizeReward> GetPrizeRewards(string presentType);
+
+    bool TryGivePrize(RegisteredPrizeReward reward, ulong steamId, string playerName);
+
+
+
 }

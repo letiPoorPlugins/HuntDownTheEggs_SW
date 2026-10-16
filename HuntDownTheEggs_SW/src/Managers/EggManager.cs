@@ -9,6 +9,7 @@ using SwiftlyS2.Shared.SchemaDefinitions;
 using DrawingColor = System.Drawing.Color;
 using NativeColor = SwiftlyS2.Shared.Natives.Color;
 using System.Drawing;
+using HuntDownTheEggs.Api;
 namespace HuntDownTheEggs;
 
 public sealed class EggManager
@@ -436,17 +437,62 @@ public sealed class EggManager
         if (type == null) return;
 
         var typeCfg = prizeCfg.PresentTypes[type];
-        if (typeCfg.Rewards.Count == 0) return;
-        var reward = typeCfg.Rewards.ElementAt(_random.Next(typeCfg.Rewards.Count));
 
-        player.SendChat($"{prefix}[{typeCfg.Color}]{l["hdte.received_prize", reward.Key, type]}");
+        // Zwykłe nagrody-komendy z głównego configu.
+        var candidates = typeCfg.Rewards
+            .Select(r => new PrizeCandidate(r.Key, r.Value, null))
+            .ToList();
 
-        var descKey = "hdte.received_desc." + reward.Key.Replace(" ", "_");
+        // Nagrody zarejestrowane przez moduły.
+        var moduleRewards = _plugin.Api.GetPrizeRewards(type);
+
+        candidates.AddRange(moduleRewards.Select(r =>
+            new PrizeCandidate(r.RewardName, r.RewardValue, r)));
+
+        if (candidates.Count == 0)
+            return;
+
+        // Losujemy dokładnie jedną nagrodę z połączonej puli.
+        var reward = candidates[_random.Next(candidates.Count)];
+
+        bool success;
+
+        if (reward.ModuleReward is { } moduleReward)
+        {
+            // Moduł sam realizuje nagrodę, np. dodaje punkty.
+            success = _plugin.Api.TryGivePrize(
+                moduleReward,
+                player.SteamID,
+                player.Controller.PlayerName);
+        }
+        else
+        {
+            // Standardowa nagroda pozostaje komendą.
+            _core.Engine.ExecuteCommand(_plugin.Helper.ReplacePlayerParameters(reward.Value, player));
+            success = true;
+        }
+
+        if (!success)
+        {
+            _plugin.DebugLog(
+                $"Failed to give prize '{reward.Name}' from type '{type}'.");
+            return;
+        }
+
+        player.SendChat(
+            $"{prefix}[{typeCfg.Color}]" +
+            $"{l["hdte.received_prize", reward.Name, type]}");
+
+        var descKey = "hdte.received_desc." +
+                      reward.Name.Replace(" ", "_");
+
         var desc = l[descKey];
-        if (!string.IsNullOrEmpty(desc) && desc != descKey) player.SendChat(prefix + desc);
 
-        _core.Engine.ExecuteCommand(_plugin.Helper.ReplacePlayerParameters(reward.Value, player));
+        if (!string.IsNullOrEmpty(desc) && desc != descKey)
+            player.SendChat(prefix + desc);
     }
+
+    private sealed record PrizeCandidate(string Name,string Value,RegisteredPrizeReward? ModuleReward);
 
 
 }
