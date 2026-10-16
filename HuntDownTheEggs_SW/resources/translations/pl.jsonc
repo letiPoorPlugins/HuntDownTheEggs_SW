@@ -1,0 +1,61 @@
+{
+  // Ogólne
+  "hdte.prefix": "[darkred][HuntDownTheEggs] [default]",
+
+  // Wiadomość powitalna
+  "hdte.welcome": "[gold]✦ [white]Witaj w [gold]HuntDownTheEggs[white]! Znajdź ukryte jajka na mapie i zdobywaj nagrody. [lime]Jajka na mapie: {0} [grey]| [lime]Losowe jajka w tej rundzie: {1}",
+
+  // Umieszczanie jajek
+  "hdte.placed_egg": "[lime]✔ [white]Jajko zostało umieszczone na pozycji [gold]{0}[white].",
+  "hdte.error_saving_egg": "[red]✖ [white]Jajko zostało utworzone, ale nie udało się zapisać go w pliku mapy.",
+
+  // Teleportacja do jajka
+  "hdte.usage_tpegg": "[red]Użycie: [white]!tpegg <ID jajka>",
+  "hdte.invalid_id": "[red]✖ [white]Nieprawidłowe ID jajka. Podaj poprawny numer.",
+  "hdte.egg_not_found": "[red]✖ [white]Nie znaleziono jajka o podanym ID.",
+  "hdte.teleport_to_egg": "[lime]✔ [white]Przeteleportowano do jajka [gold]#{0}[white].",
+
+  // Usuwanie i przeładowywanie jajek
+  "hdte.usage_removeegg": "[red]Użycie: [white]!removeegg <ID jajka>",
+  "hdte.regenerating_eggs": "[gold]⟳ [white]Ponowne generowanie jajek... Poczekaj chwilę.",
+  "hdte.eggs_reloaded": "[lime]✔ [white]Jajka zostały pomyślnie przeładowane.",
+
+  // Tryb umieszczania jajek
+  "hdte.placing_mode": "[gold]⚙ [white]Tryb umieszczania jajek: {0}",
+
+  // Statystyki gracza
+  "hdte.player_not_found": "[red]✖ [white]Nie udało się znaleźć Twoich danych. Spróbuj ponownie za chwilę.",
+  "hdte.my_eggs": "[gold]✦ [white]TWOJA KOLEKCJA JAJEK\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Zebrane jajka z mapy: [lime]{0}\n[white]Jajka za zabójstwa: [red]{1}\n[white]Łącznie zebrane jajka: [gold]{2}\n[white]Unikalne znalezione jajka: [lime]{3}\n[white]Aktualna mapa: [aqua]{4}\n[white]Zebrane losowe jajka: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+
+  // Rankingi
+  "hdte.top_list_header": "[gold]✦ [white]ŁOWCY JAJEK — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kill_eggs_header": "[gold]✦ [white]JAJKA ZA ZABÓJSTWA — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_eggs_header": "[gold]✦ [white]LOSOWE JAJKA — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.no_eggs_found": "[grey]Nie zarejestrowano jeszcze żadnych zebranych jajek. Zostań pierwszym!",
+  "hdte.top_list_player": "[gold]#{0} [white]{1} [grey]» [lime]{2} [white]jajek",
+
+  // Komunikaty na początku rundy
+  "hdte.new_round_random_eggs": "[gold]✦ [white]Rozpoczęła się nowa runda! Na mapie pojawiło się [lime]{0} [white]losowych jajek. [gold]Powodzenia w poszukiwaniach!",
+
+  // Zbieranie jajek
+  "hdte.only_for_killer": "[red]✖ [white]To jajko za zabójstwo należy się graczowi, który dokonał zabójstwa!",
+  "hdte.kill_egg": "[red]☠ [white]Zebrano [red]jajko za zabójstwo[white]! [gold]Może czeka na Ciebie nagroda...",
+  "hdte.random_egg": "[purple]✦ [white]Znaleziono [purple]losowe jajko[white]! [gold]Sprawdźmy, co udało Ci się zdobyć...",
+  "hdte.already_own": "[orange]⚠ [white]To jajko zostało już przez Ciebie zebrane.",
+  "hdte.egg_shot_hp": "[gold]✦ [white]Wytrzymałość jajka: [lime]{0}[white]. Strzelaj dalej!",
+
+  // Nagrody
+  "hdte.picked_egg_no_prize": "[lime]✔ [white]Zebrano jajko! [grey]Łączna liczba specjalnych jajek: [gold]{0}[grey]. Obecnie nie skonfigurowano żadnych nagród.",
+  "hdte.received_prize": "[gold]★ [white]Otrzymujesz [gold]{0}[white] z [gold]{1}[white]!",
+
+  // Opcjonalne opisy nagród.
+  // Klucze muszą odpowiadać nazwom nagród z konfiguracji.
+  // Spacje w nazwach są zamieniane na podkreślenia.
+  "hdte.received_desc.VIP": "[gold]★ [white]Korzystaj z przywilejów VIP!",
+  "hdte.received_desc.VIP_Plus": "[gold]★ [white]Korzystaj z przywilejów VIP+!",
+  "hdte.received_desc.Points": "[lime]✦ [white]Punkty zostały dodane do Twojego konta.",
+  "hdte.received_desc.Coins": "[gold]✦ [white]Monety zostały dodane do Twojego konta.",
+  "hdte.received_desc.Credits": "[lime]✦ [white]Kredyty zostały dodane do Twojego konta.",
+  "hdte.received_desc.Money": "[lime]✦ [white]Otrzymujesz nagrodę pieniężną!",
+  "hdte.received_desc.Random_Reward": "[purple]✦ [white]Otrzymujesz losową nagrodę!"
+}

@@ -1,3 +1,52 @@
 {
-  "hello": "world"
+  // General
+  "hdte.prefix": "[darkred][HuntDownTheEggs] [default]",
+  // Welcome message
+  "hdte.welcome": "[gold]✦ [white]Welcome to [gold]HuntDownTheEggs[white]! Find hidden eggs around the map and earn rewards. [lime]Map eggs: {0} [grey]| [lime]Random eggs this round: {1}",
+  // Egg placement
+  "hdte.placed_egg": "[lime]✔ [white]Egg placed successfully at [gold]{0}[white].",
+  "hdte.error_saving_egg": "[red]✖ [white]The egg was spawned, but saving it to the map file failed.",
+  // Teleport command
+  "hdte.usage_tpegg": "[red]Usage: [white]!tpegg <egg ID>",
+  "hdte.invalid_id": "[red]✖ [white]Invalid egg ID. Please enter a valid number.",
+  "hdte.egg_not_found": "[red]✖ [white]No egg with that ID was found.",
+  "hdte.teleport_to_egg": "[lime]✔ [white]Teleported to egg [gold]#{0}[white].",
+  // Remove / reload commands
+  "hdte.usage_removeegg": "[red]Usage: [white]!removeegg <egg ID>",
+  "hdte.regenerating_eggs": "[gold]⟳ [white]Regenerating eggs... Please wait.",
+  "hdte.eggs_reloaded": "[lime]✔ [white]Eggs have been successfully reloaded.",
+  // Admin placement mode
+  "hdte.placing_mode": "[gold]⚙ [white]Egg placement mode: {0}",
+  // Player statistics
+  "hdte.player_not_found": "[red]✖ [white]Your player data could not be found. Please try again shortly.",
+  "hdte.my_eggs": "[gold]✦ [white]YOUR EGG COLLECTION\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Map eggs collected: [lime]{0}\n[white]Kill eggs collected: [red]{1}\n[white]Total eggs collected: [gold]{2}\n[white]Unique eggs found: [lime]{3}\n[white]Current map: [aqua]{4}\n[white]Random eggs collected: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  // Leaderboards
+  "hdte.top_list_header": "[gold]✦ [white]EGG HUNTERS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kill_eggs_header": "[gold]✦ [white]KILL EGGS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_eggs_header": "[gold]✦ [white]RANDOM EGGS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.no_eggs_found": "[grey]No collected eggs have been recorded yet. Be the first!",
+  "hdte.top_list_player": "[gold]#{0} [white]{1} [grey]» [lime]{2} [white]eggs",
+  // Round announcements
+  "hdte.new_round_random_eggs": "[gold]✦ [white]A new round has begun! [lime]{0} [white]random eggs have appeared around the map. [gold]Happy hunting!",
+  // Egg collection
+  "hdte.only_for_killer": "[red]✖ [white]This kill egg belongs to the player who got the kill!",
+  "hdte.kill_egg": "[red]☠ [white]You collected a [red]Kill Egg[white]! [gold]A reward may await you...",
+  "hdte.random_egg": "[purple]✦ [white]You discovered a [purple]Random Egg[white]! [gold]Let's see what you get...",
+  "hdte.already_own": "[orange]⚠ [white]You have already collected this egg.",
+  "hdte.egg_shot_hp": "[gold]✦ [white]Egg health: [lime]{0}[white]. Keep shooting!",
+  // Rewards
+  "hdte.picked_egg_no_prize": "[lime]✔ [white]Egg collected! [grey]Total special eggs collected: [gold]{0}[grey]. No reward is configured right now.",
+  "hdte.received_prize": "[gold]★ [white]You received [gold]{0}[white] from a [gold]{1}[white]!",
+
+  // Optional reward descriptions.
+  // These keys are constructed dynamically from reward names:
+  // "hdte.received_desc." + reward.Key.Replace(" ", "_")
+  // Add entries matching the exact reward names configured on your server.
+  "hdte.received_desc.VIP": "[gold]★ [white]Enjoy your VIP benefits!",
+  "hdte.received_desc.VIP_Plus": "[gold]★ [white]Enjoy your VIP+ benefits!",
+  "hdte.received_desc.Points": "[lime]✦ [white]Points have been added to your account.",
+  "hdte.received_desc.Coins": "[gold]✦ [white]Coins have been added to your account.",
+  "hdte.received_desc.Credits": "[lime]✦ [white]Credits have been added to your account.",
+  "hdte.received_desc.Money": "[lime]✦ [white]You received a cash reward!",
+  "hdte.received_desc.Random_Reward": "[purple]✦ [white]You received a random reward!"
 }
