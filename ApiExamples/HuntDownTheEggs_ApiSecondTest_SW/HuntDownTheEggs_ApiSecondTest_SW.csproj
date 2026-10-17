@@ -7,9 +7,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AssemblyName>HuntDownTheEggs_ApiTest_SW</AssemblyName>
+    <AssemblyName>HuntDownTheEggs_ApiSecondTest_SW</AssemblyName>
     <OutputPath>$(MSBuildThisFileDirectory)build/</OutputPath>
-    <PublishDir>$(OutputPath)publish/HuntDownTheEggs_ApiTest_SW</PublishDir>
+    <PublishDir>$(OutputPath)publish/HuntDownTheEggs_ApiSecondTest_SW</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../HuntDownTheEggs_SW.Contract/HuntDownTheEggs_SW.Contract.csproj" />
+    <ProjectReference Include="../../HuntDownTheEggs_SW.Contract/HuntDownTheEggs_SW.Contract.csproj" />
   </ItemGroup>
 
   <ItemGroup>

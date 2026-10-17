@@ -39,6 +39,7 @@ public interface IHuntDownTheEggsApi
     int GetKillEggCount(ulong steamId);
 
     int GetRandomEggCount(ulong steamId);
+    bool AllowToSpawnEggs(bool allow);
     event Action<EggCollectedEvent>? EggCollected;
 
     Guid RegisterPrizeProvider(string presentType, string providerId, IReadOnlyDictionary<string, string> rewards, EggPrizeRewardHandler handler);

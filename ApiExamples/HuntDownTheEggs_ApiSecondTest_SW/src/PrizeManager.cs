@@ -8,8 +8,6 @@ public sealed partial class ShopPoints
 {
     private bool GiveReward(ulong steamId, string playerName, string rewardName, string rewardValue)
     {
-        // To wywołuje główny HuntDownTheEggs, kiedy
-        // nagroda tego modułu zostanie wylosowana.
         Core.Logger.LogInformation(
             "[ShopPoints] ===== REWARD CALLBACK =====");
 

@@ -117,6 +117,8 @@ public sealed class EggManager
     {
         var cfg = _plugin.Config.ModesSetup;
 
+        if(!_plugin.AllowToSpawnEggs) return;
+
         foreach (var egg in _eggs)
             SpawnEgg(new Vector(egg.X, egg.Y, egg.Z), EggKind.Placed, egg.ModelColor, egg.Id);
 

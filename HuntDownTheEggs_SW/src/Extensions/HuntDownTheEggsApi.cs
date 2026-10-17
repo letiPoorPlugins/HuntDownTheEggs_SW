@@ -31,6 +31,8 @@ public sealed class HuntDownTheEggsApi : IHuntDownTheEggsApi
         return _plugin.Players.Get(steamId)?.RandomEggs ?? 0;
     }
 
+    public bool AllowToSpawnEggs(bool allow) => _plugin.AllowToSpawnEggs = allow;
+
     public event Action<EggCollectedEvent>? EggCollected;
     public void NotifyEggCollected(ulong steamId, string playerName, int? eggId, string map, EggCollectionKind kind)
     {

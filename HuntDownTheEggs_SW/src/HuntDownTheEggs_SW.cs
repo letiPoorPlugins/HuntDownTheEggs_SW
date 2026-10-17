@@ -20,6 +20,8 @@ public sealed partial class HuntDownTheEggsPlugin : BasePlugin
   public Helpers Helper {get; private set;} = null!;
   public string MapName { get; set; } = string.Empty;
   public bool WarmupRunning { get; set; }
+
+  public bool AllowToSpawnEggs {get;set;} = true;
   public HuntDownTheEggsApi Api { get; }
   public HuntDownTheEggsPlugin(ISwiftlyCore core) : base(core)
   {
