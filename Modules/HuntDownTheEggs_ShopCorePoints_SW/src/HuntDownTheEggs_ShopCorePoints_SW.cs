@@ -7,7 +7,7 @@ using SwiftlyS2.Shared.Plugins;
 
 namespace HuntDownTheEggs_ShopCorePoints_SW;
 
-[PluginMetadata(Id = "HuntDownTheEggs_ShopCorePoints_SW", Version = "1.0.0", Name = "HuntDownTheEggs_ShopCorePoints_SW", Author = "Letaryat", Description = "HuntDownTheEggs_ShopCorePoints_SW")]
+[PluginMetadata(Id = "HuntDownTheEggs_ShopCorePoints_SW", Version = "1.0.1", Name = "HuntDownTheEggs_ShopCorePoints_SW", Author = "Letaryat", Description = "HuntDownTheEggs_ShopCorePoints_SW")]
 public partial class HuntDownTheEggs_ShopCorePoints_SW : BasePlugin
 {
   private const string ApiKey = "HuntDownTheEggs.Api.v1";
@@ -16,6 +16,7 @@ public partial class HuntDownTheEggs_ShopCorePoints_SW : BasePlugin
   private IShopCoreApiV2? _shopApi;
   private ShopPointsConfig _config = new();
   private Guid? _registrationId;
+  private readonly List<Guid> _registrationIds = [];
   private bool _configLoaded;
   private readonly JsonSerializerOptions _jsonOptions = new()
   {
@@ -107,7 +108,7 @@ public partial class HuntDownTheEggs_ShopCorePoints_SW : BasePlugin
         "[ShopCorePoints] Config loaded. Enabled={Enabled}, " +
         "PresentType={PresentType}, Rewards={RewardCount}",
         _config.Enabled,
-        _config.PresentType,
+        _config.Rewards,
         _config.Rewards.Count);
   }
   private void TryRegisterRewards()
@@ -134,21 +135,21 @@ public partial class HuntDownTheEggs_ShopCorePoints_SW : BasePlugin
 
     try
     {
-      _registrationId = _api.RegisterPrizeProvider(
-          _config.PresentType,
-          _config.ProviderId,
-          _config.Rewards,
-          GiveReward);
+      foreach (var (presentType, rewards) in _config.Rewards)
+      {
+        var id = _api.RegisterPrizeProvider(
+            presentType,
+            _config.ProviderId,
+            rewards,
+            GiveReward);
 
-      Core.Logger.LogInformation(
-          "[ShopCorePoints] Reward provider registered. " +
-          "RegistrationId={RegistrationId}, " +
-          "ProviderId={ProviderId}, PresentType={PresentType}, " +
-          "RewardCount={RewardCount}",
-          _registrationId,
-          _config.ProviderId,
-          _config.PresentType,
-          _config.Rewards.Count);
+        _registrationIds.Add(id);
+
+        Core.Logger.LogInformation(
+            "[ShopCorePoints] Reward provider registered: {Type} ({Id})",
+            presentType,
+            id);
+      }
 
       foreach (var reward in _config.Rewards)
       {
@@ -164,15 +165,18 @@ public partial class HuntDownTheEggs_ShopCorePoints_SW : BasePlugin
   {
     if (_api is not null)
     {
-
-      if (_registrationId is Guid id)
+      foreach (var id in _registrationIds)
       {
         _api.UnregisterPrizeProvider(id);
 
-        Core.Logger.LogInformation("[ShopCorePoints] Reward provider unregistered: {Id}", id);
+        Core.Logger.LogInformation(
+            "[ShopCorePoints] Reward provider unregistered: {Id}",
+            id);
       }
     }
-    _registrationId = null;
+
+    _registrationIds.Clear();
     _api = null;
   }
+
 }
