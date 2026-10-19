@@ -28,9 +28,14 @@
   "hdte.my_eggs": "[gold]✦ [white]TWOJA KOLEKCJA JAJEK\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Zebrane jajka z mapy: [lime]{0}\n[white]Jajka za zabójstwa: [red]{1}\n[white]Łącznie zebrane jajka: [gold]{2}\n[white]Unikalne znalezione jajka: [lime]{3}\n[white]Aktualna mapa: [green]{4}\n[white]Zebrane losowe jajka: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
 
   // Rankingi
-  "hdte.top_list_header": "[gold]✦ [white]ŁOWCY JAJEK — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
-  "hdte.top_kill_eggs_header": "[gold]✦ [white]JAJKA ZA ZABÓJSTWA — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
-  "hdte.top_random_eggs_header": "[gold]✦ [white]LOSOWE JAJKA — RANKING\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_placed_map": "[gold]✦ [white]TOP 5 — ROZMIESZCZONE JAJKA (MAPA)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_map": "[gold]✦ [white]TOP 5 — LOSOWE JAJKA (MAPA)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kills_map": "[gold]✦ [white]TOP 5 — JAJKA ZA ZABÓJSTWA (MAPA)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_all_map": "[gold]✦ [white]TOP 5 — WSZYSTKIE JAJKA (MAPA)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_placed_all": "[gold]✦ [white]TOP 5 — ROZMIESZCZONE JAJKA (WSZYSTKIE MAPY)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_all": "[gold]✦ [white]TOP 5 — LOSOWE JAJKA (WSZYSTKIE MAPY)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kills_all": "[gold]✦ [white]TOP 5 — JAJKA ZA ZABÓJSTWA (WSZYSTKIE MAPY)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_all_all": "[gold]✦ [white]TOP 5 — WSZYSTKIE JAJKA (WSZYSTKIE MAPY)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
   "hdte.no_eggs_found": "[grey]Nie zarejestrowano jeszcze żadnych zebranych jajek. Zostań pierwszym!",
   "hdte.top_list_player": "[gold]#{0} [white]{1} [grey]» [lime]{2} [white]jajek",
 

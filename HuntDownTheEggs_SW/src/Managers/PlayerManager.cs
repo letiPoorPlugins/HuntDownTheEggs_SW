@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Players;
 
@@ -11,10 +12,15 @@ public sealed class PlayerManager
     private readonly ConcurrentDictionary<ulong, PlayerData> _players = new();
     private readonly ConcurrentDictionary<ulong, byte> _loading = new();
 
-    private Dictionary<string, int> _topEggs = [];
-    private Dictionary<string, int> _topKillEggs = [];
+    private Dictionary<string, int> _topPlacedEggsPerMap = [];
+    private Dictionary<string, int> _topRandomEggsPerMap = [];
+    private Dictionary<string, int> _topKillEggsPerMap = [];
+    private Dictionary<string, int> _topAllEggsPerMap = [];
+    private Dictionary<string, int> _topPlacedEggs = [];
     private Dictionary<string, int> _topRandomEggs = [];
-
+    private Dictionary<string, int> _topKillEggs = [];
+    private Dictionary<string, int> _topAllEggs = [];
+    private readonly object _topListsLock = new();
     public PlayerManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore core)
     {
         _plugin = plugin;
@@ -25,7 +31,6 @@ public sealed class PlayerManager
 
     public PlayerData? Get(ulong steamId) => _players.TryGetValue(steamId, out var d) ? d : null;
 
-    /// <summary>Ładuje dane gracza z bazy w tle (bez blokowania wątku gry). Bezpieczne do wielokrotnego wołania.</summary>
     public void EnsureLoaded(ulong steamId, string name)
     {
         if (steamId == 0 || _players.ContainsKey(steamId)) return;
@@ -39,7 +44,6 @@ public sealed class PlayerManager
                 var existing = await _plugin.Database.GetPlayerEggsAsync(steamId, map);
                 var data = existing ?? new PlayerData { SteamId = steamId, Map = map };
                 data.PlayerName = name;
-                // Jeśli mapa zmieniła się w międzyczasie, wynik jest nieaktualny.
                 if (map == _plugin.MapName) _players[steamId] = data;
             }
             finally
@@ -87,21 +91,96 @@ public sealed class PlayerManager
 
     private static PlayerData Snapshot(PlayerData d) => new()
     {
-        SteamId = d.SteamId, PlayerName = d.PlayerName, Map = d.Map,
-        Eggs = [.. d.Eggs], KillEggs = d.KillEggs, RandomEggs = d.RandomEggs, TotalEggs = d.TotalEggs
+        SteamId = d.SteamId,
+        PlayerName = d.PlayerName,
+        Map = d.Map,
+        Eggs = [.. d.Eggs],
+        KillEggs = d.KillEggs,
+        RandomEggs = d.RandomEggs,
+        TotalEggs = d.TotalEggs
     };
 
     public void LoadTopLists(string map)
     {
         _ = Task.Run(async () =>
         {
-            _topEggs = await _plugin.Database.GetTopEggsAsync();
-            _topKillEggs = await _plugin.Database.GetTopKillEggsAsync(map);
-            _topRandomEggs = await _plugin.Database.GetTopRandomEggsAsync(map);
+            try
+            {
+                var results = await Task.WhenAll(
+                    _plugin.Database.GetTopEggsPerMapAsync(map),
+                    _plugin.Database.GetTopRandomEggsPerMapAsync(map),
+                    _plugin.Database.GetTopKillEggsPerMapAsync(map),
+                    _plugin.Database.GetTopAllEggsPerMapAsync(map),
+
+                    _plugin.Database.GetTopPlacedEggsAsync(),
+                    _plugin.Database.GetTopRandomEggsAsync(),
+                    _plugin.Database.GetTopKillEggsAsync(),
+                    _plugin.Database.GetTopAllEggsAsync()
+                );
+
+                if (map != _plugin.MapName)
+                    return;
+
+                lock (_topListsLock)
+                {
+                    _topPlacedEggsPerMap = results[0];
+                    _topRandomEggsPerMap = results[1];
+                    _topKillEggsPerMap = results[2];
+                    _topAllEggsPerMap = results[3];
+
+                    _topPlacedEggs = results[4];
+                    _topRandomEggs = results[5];
+                    _topKillEggs = results[6];
+                    _topAllEggs = results[7];
+                }
+
+                _plugin.DebugLog("All 8 egg leaderboards loaded.");
+            }
+            catch (Exception ex)
+            {
+                _core.Logger.LogError(ex, "Error loading egg leaderboards");
+            }
         });
     }
 
-    public Dictionary<string, int> TopEggs => _topEggs;
-    public Dictionary<string, int> TopKillEggs => _topKillEggs;
-    public Dictionary<string, int> TopRandomEggs => _topRandomEggs;
+    public Dictionary<string, int> TopPlacedEggsPerMap
+    {
+        get { lock (_topListsLock) return new(_topPlacedEggsPerMap); }
+    }
+
+    public Dictionary<string, int> TopRandomEggsPerMap
+    {
+        get { lock (_topListsLock) return new(_topRandomEggsPerMap); }
+    }
+
+    public Dictionary<string, int> TopKillEggsPerMap
+    {
+        get { lock (_topListsLock) return new(_topKillEggsPerMap); }
+    }
+
+    public Dictionary<string, int> TopAllEggsPerMap
+    {
+        get { lock (_topListsLock) return new(_topAllEggsPerMap); }
+    }
+
+    public Dictionary<string, int> TopPlacedEggs
+    {
+        get { lock (_topListsLock) return new(_topPlacedEggs); }
+    }
+
+    public Dictionary<string, int> TopRandomEggs
+    {
+        get { lock (_topListsLock) return new(_topRandomEggs); }
+    }
+
+    public Dictionary<string, int> TopKillEggs
+    {
+        get { lock (_topListsLock) return new(_topKillEggs); }
+    }
+
+    public Dictionary<string, int> TopAllEggs
+    {
+        get { lock (_topListsLock) return new(_topAllEggs); }
+    }
+
 }

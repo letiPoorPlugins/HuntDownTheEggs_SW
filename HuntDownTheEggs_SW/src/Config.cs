@@ -4,9 +4,7 @@ namespace HuntDownTheEggs;
 // dlatego nazwy właściwości = nazwy kluczy w config.jsonc.
 public sealed class PluginConfig
 {
-    /// <summary>Nazwa połączenia z database.jsonc SwiftlyS2 (zastępuje DBHost/DBPort/DBUsername/...).</summary>
-    public string DatabaseConnection { get; set; } = "hunt_down_the_eggs";
-
+    public string DatabaseConnection { get; set; } = "default";
     public EggSetup EggSetup { get; set; } = new();
     public ModesSetup ModesSetup { get; set; } = new();
     public PrizeSetup PrizeSetup { get; set; } = new();
@@ -66,16 +64,18 @@ public sealed class EggTypeConfig
 public sealed class CommandsSetup
 {
     public bool EnableCommands { get; set; } = true;
-
-    // Nazwy bez prefiksu "css_" – SwiftlyS2 sam rejestruje wersję konsolową (sw_) i czatową (!).
     public List<string> PlaceEggCommands { get; set; } = ["eggplace"];
     public List<string> TeleportToEggCommands { get; set; } = ["tpegg"];
     public List<string> RemoveEggCommands { get; set; } = ["removeegg"];
     public List<string> ReloadEggsCommands { get; set; } = ["reloadeggs"];
     public List<string> PlacingModeCommands { get; set; } = ["placingmode"];
     public List<string> ShowMyEggsCommands { get; set; } = ["myeggs"];
-    public List<string> ShowTopEggsCommands { get; set; } = ["topeggs"];
-    public List<string> ShowTopKillEggsCommands { get; set; } = ["topkilleggs"];
-    public List<string> ShowTopRandomEggsCommands { get; set; } = ["toprandomeggs"];
-
+    public List<string> ShowTopPlacedEggsPerMapCommands { get; set; } = ["topplaced"];
+    public List<string> ShowTopRandomEggsPerMapCommands { get; set; } = ["toprandom"];
+    public List<string> ShowTopKillEggsPerMapCommands { get; set; } = ["topkills"];
+    public List<string> ShowTopAllEggsPerMapCommands { get; set; } = ["topeggsmap"];
+    public List<string> ShowTopPlacedEggsCommands { get; set; } = ["topplacedall"];
+    public List<string> ShowTopRandomEggsCommands { get; set; } = ["toprandomall"];
+    public List<string> ShowTopKillEggsCommands { get; set; } = ["topkillsall"];
+    public List<string> ShowTopAllEggsCommands { get; set; } = ["topeggsall"];
 }

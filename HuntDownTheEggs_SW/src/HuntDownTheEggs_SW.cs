@@ -8,7 +8,7 @@ using HuntDownTheEggs.Api;
 
 namespace HuntDownTheEggs;
 
-[PluginMetadata(Id = "HuntDownTheEggs", Version = "1.0.1", Name = "Hunt Down The Eggs", Author = "Letaryat", Description = "Egg hunting game mode - SwiftlyS2 port")]
+[PluginMetadata(Id = "HuntDownTheEggs", Version = "1.0.2", Name = "Hunt Down The Eggs", Author = "Letaryat", Description = "Egg hunting game mode - SwiftlyS2 port")]
 public sealed partial class HuntDownTheEggsPlugin : BasePlugin
 {
   public PluginConfig Config { get; private set; } = new();

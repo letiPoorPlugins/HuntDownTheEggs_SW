@@ -1,7 +1,6 @@
 
 using System.Text.Json;
 using HuntDownTheEggs_SW;
-using Microsoft.Extensions.Logging;
 using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.Players;
@@ -85,7 +84,7 @@ public sealed class EggManager
         {
             _eggs.Add(new EggData
             {
-                // Wysokość (EggModelHeight) dodaje dopiero SpawnEgg – w oryginale była dodawana podwójnie.
+
                 Id = _eggs.Count,
                 X = pos.X,
                 Y = pos.Y,
@@ -117,7 +116,7 @@ public sealed class EggManager
     {
         var cfg = _plugin.Config.ModesSetup;
 
-        if(!_plugin.AllowToSpawnEggs) return;
+        if (!_plugin.AllowToSpawnEggs) return;
 
         foreach (var egg in _eggs)
             SpawnEgg(new Vector(egg.X, egg.Y, egg.Z), EggKind.Placed, egg.ModelColor, egg.Id);
@@ -440,12 +439,8 @@ public sealed class EggManager
 
         var typeCfg = prizeCfg.PresentTypes[type];
 
-        // Zwykłe nagrody-komendy z głównego configu.
-        var candidates = typeCfg.Rewards
-            .Select(r => new PrizeCandidate(r.Key, r.Value, null))
-            .ToList();
+        var candidates = typeCfg.Rewards.Select(r => new PrizeCandidate(r.Key, r.Value, null)).ToList();
 
-        // Nagrody zarejestrowane przez moduły.
         var moduleRewards = _plugin.Api.GetPrizeRewards(type);
 
         candidates.AddRange(moduleRewards.Select(r =>
@@ -461,7 +456,6 @@ public sealed class EggManager
 
         if (reward.ModuleReward is { } moduleReward)
         {
-            // Moduł sam realizuje nagrodę, np. dodaje punkty.
             success = _plugin.Api.TryGivePrize(
                 moduleReward,
                 player.SteamID,
@@ -469,7 +463,6 @@ public sealed class EggManager
         }
         else
         {
-            // Standardowa nagroda pozostaje komendą.
             _core.Engine.ExecuteCommand(_plugin.Helper.ReplacePlayerParameters(reward.Value, player));
             success = true;
         }
@@ -494,7 +487,7 @@ public sealed class EggManager
             player.SendChat(prefix + desc);
     }
 
-    private sealed record PrizeCandidate(string Name,string Value,RegisteredPrizeReward? ModuleReward);
+    private sealed record PrizeCandidate(string Name, string Value, RegisteredPrizeReward? ModuleReward);
 
 
 }

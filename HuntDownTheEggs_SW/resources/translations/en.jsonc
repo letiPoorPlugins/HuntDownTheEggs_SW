@@ -21,9 +21,14 @@
   "hdte.player_not_found": "[red]✖ [white]Your player data could not be found. Please try again shortly.",
   "hdte.my_eggs": "[gold]✦ [white]YOUR EGG COLLECTION\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━\n[white]Map eggs collected: [lime]{0}\n[white]Kill eggs collected: [red]{1}\n[white]Total eggs collected: [gold]{2}\n[white]Unique eggs found: [lime]{3}\n[white]Current map: [green]{4}\n[white]Random eggs collected: [purple]{5}\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
   // Leaderboards
-  "hdte.top_list_header": "[gold]✦ [white]EGG HUNTERS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
-  "hdte.top_kill_eggs_header": "[gold]✦ [white]KILL EGGS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
-  "hdte.top_random_eggs_header": "[gold]✦ [white]RANDOM EGGS — LEADERBOARD\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_placed_map": "[gold]✦ [white]TOP 5 — PLACED EGGS (MAP)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_map": "[gold]✦ [white]TOP 5 — RANDOM EGGS (MAP)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kills_map": "[gold]✦ [white]TOP 5 — KILL EGGS (MAP)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_all_map": "[gold]✦ [white]TOP 5 — ALL EGGS (MAP)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_placed_all": "[gold]✦ [white]TOP 5 — PLACED EGGS (ALL MAPS)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_random_all": "[gold]✦ [white]TOP 5 — RANDOM EGGS (ALL MAPS)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_kills_all": "[gold]✦ [white]TOP 5 — KILL EGGS (ALL MAPS)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
+  "hdte.top_all_all": "[gold]✦ [white]TOP 5 — ALL EGGS (ALL MAPS)\n[grey]━━━━━━━━━━━━━━━━━━━━━━━━",
   "hdte.no_eggs_found": "[grey]No collected eggs have been recorded yet. Be the first!",
   "hdte.top_list_player": "[gold]#{0} [white]{1} [grey]» [lime]{2} [white]eggs",
   // Round announcements
@@ -49,4 +54,5 @@
   "hdte.received_desc.Credits": "[lime]✦ [white]Credits have been added to your account.",
   "hdte.received_desc.Money": "[lime]✦ [white]You received a cash reward!",
   "hdte.received_desc.Random_Reward": "[purple]✦ [white]You received a random reward!"
+  
 }
