@@ -24,7 +24,7 @@ public static class NavMesh
 
     private static void Log(string message)
     {
-        if (_plugin!.Config.Debug) _core!.Logger.LogInformation("[HDTE] {Message}", message);
+        if (_plugin!.Config.DebugNavMesh) _core!.Logger.LogInformation("[HDTE NAVMESH] {Message}", message);
     }
 
     public static bool InitializeUnmanagedFunctions()

@@ -9,7 +9,7 @@ public sealed class PluginConfig
     public ModesSetup ModesSetup { get; set; } = new();
     public PrizeSetup PrizeSetup { get; set; } = new();
     public CommandsSetup CommandsSetup { get; set; } = new();
-
+    public bool DebugNavMesh {get; set; } = true;
     public bool Debug { get; set; } = true;
 }
 
