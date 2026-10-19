@@ -15,7 +15,7 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
 {
     private const float ThinkInterval = 0.1f;
     private const float DamageToEnrage = 150.0f;
-    private const float ChargeSpeed = 650.0f;
+    private const float ChargeSpeed = 300.0f;
     private const float KnockbackSpeed = 850.0f;
     private const float KnockbackUpward = 800.0f;
     private const float ChargeDistance = 120.0f;

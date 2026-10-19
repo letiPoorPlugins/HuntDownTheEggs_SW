@@ -36,13 +36,11 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
   private uint _gigaChickenIndex;
 
   private string[] _particleList = [
-    "particles/survival_fx/danger_in_zone.vpcf",
-    "particles/screen_fx/ar_screenglow_ct.vpcf",
-    "particles/footstep_fx/footstep_puddle_b.vpcf",
-    "particles/explosions_fx/explosion_hegrenade_distort.vpcf",
-    "particles/overhead_icon_fx/player_ping.vpcf",
-    "particles/weapons/cs_weapon_fx/weapon_taser_glow.vpcf"
-
+    "particles/line_attack.vpcf",
+    "particles/chicken_bombs.vpcf",
+    "particles/double_jump_rings.vpcf",
+    "particles/health_burst.vpcf",
+    "particles/explosions_fx/explosion_hegrenade_distort.vpcf"
   ];
 
   private int _particleTest = 0;
@@ -90,7 +88,7 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
 
     _particleTest = value;
 
-    CreateParticle(new Vector3(pos.Value.X, pos.Value.Y, pos.Value.Z));
+    CreateParticle(new Vector3(pos.Value.X, pos.Value.Y, pos.Value.Z), _particleTest);
 
     context.Reply($"particleTest ustawiono na: {_particleTest}");
   }
@@ -284,6 +282,8 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
           chicken.DesiredActivity = EChickenActivity.Idle;
         }
 
+        CreateLineParticle(chickenPos, target);
+
         _aimTicksRemaining--;
 
         if (_aimTicksRemaining <= 0)
@@ -347,7 +347,7 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
   }
 
 
-  private CParticleSystem? CreateParticle(Vector3 position)
+  private CParticleSystem? CreateParticle(Vector3 position, int _particle)
   {
     if (_particleTest < 0 || _particleTest >= _particleList.Length)
       return null;
@@ -358,7 +358,7 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
     if (particle == null || !particle.IsValid)
       return null;
 
-    particle.EffectName = _particleList[_particleTest];
+    particle.EffectName = _particleList[_particle];
     particle.StartActive = true;
 
     particle.Teleport(
@@ -375,7 +375,87 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW : BasePlugin
     particle.SetScaleAsync(50.0f);
     particle.DispatchSpawn();
 
+    particle.Active = true;
+    particle.ActiveUpdated();
 
+    particle.AcceptInput<string>("Start", "", null, null, 0);
+
+    return particle;
+  }
+
+  private CParticleSystem? CreateBombParticle(Vector3 position, int particleIndex, Vector3 _color)
+  {
+    if (particleIndex < 0 || particleIndex >= _particleList.Length)
+      return null;
+
+    var particle = Core.EntitySystem
+        .CreateEntityByDesignerName<CParticleSystem>("info_particle_system");
+
+    if (particle == null || !particle.IsValid)
+      return null;
+
+    // Ustaw efekt przed DispatchSpawn.
+    particle.EffectName = _particleList[particleIndex];
+    particle.StartActive = false;
+
+    particle.DispatchSpawn();
+
+    if (!particle.IsValid)
+      return null;
+
+    particle.Teleport(
+        new SwiftlyS2.Shared.Natives.Vector(
+            position.X,
+            position.Y,
+            position.Z
+        ),
+        new QAngle(0, 0, 0),
+        null
+    );
+
+    particle.AcceptInput<string>(
+        "SetControlPoint",
+        value: $"0: {position.X} {position.Y} {position.Z}"
+    );
+
+    particle.AcceptInput<string>(
+        "SetControlPoint",
+        value: "1: 2 0 0"
+    );
+
+    particle.AcceptInput<string>(
+        "SetControlPoint",
+        value: $"2: {_color.X} {_color.Y} {_color.Z}"
+    );
+
+    particle.AcceptInput<string>("Start", "", null, null, 0);
+
+    return particle;
+  }
+
+
+  private CParticleSystem? CreateLineParticle(Vector3 position, Vector3 target)
+  {
+    if (_particleTest < 0 || _particleTest >= _particleList.Length)
+      return null;
+
+    var particle = Core.EntitySystem
+        .CreateEntityByDesignerName<CParticleSystem>("info_particle_system");
+
+    if (particle == null || !particle.IsValid)
+      return null;
+
+    particle.EffectName = _particleList[0];
+    particle.StartActive = true;
+
+    particle.Teleport(new SwiftlyS2.Shared.Natives.Vector(position.X, position.Y, position.Z), new QAngle(0, 0, 0), null
+    );
+
+    particle.AcceptInput<string>("SetControlPoint", value: $"4: 0 30 0");
+    particle.AcceptInput<string>("SetControlPoint", value: $"5: {position.X} {position.Y} {position.Z + 10}");
+    particle.AcceptInput<string>("SetControlPoint", value: $"6: {target.X} {target.Y} {target.Z + 10}");
+
+    particle.DispatchSpawn();
 
     particle.Active = true;
     particle.ActiveUpdated();

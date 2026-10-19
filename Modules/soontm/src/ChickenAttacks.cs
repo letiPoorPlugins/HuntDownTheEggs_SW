@@ -17,16 +17,18 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
 
         var attacks = new[]
         {
-                    ChickenAttacks.EggBombardment,
-        /*
-        ChickenAttacks.Charge,
-        ChickenAttacks.Stomp,
-        ChickenAttacks.Peck,
-        ChickenAttacks.Bombs,
-
-        ChickenAttacks.GroundWave,
-        ChickenAttacks.EggSniper
-        */
+            ChickenAttacks.EggBombardment,
+            ChickenAttacks.Bombs,
+            ChickenAttacks.GroundWave,
+            /*
+            ChickenAttacks.EggBombardment,
+            ChickenAttacks.Charge,
+            ChickenAttacks.Stomp,
+            ChickenAttacks.Peck,
+            ChickenAttacks.Bombs,
+            ChickenAttacks.GroundWave,
+            ChickenAttacks.EggSniper
+            */
     };
 
         var attack = attacks[Random.Shared.Next(attacks.Length)];
@@ -79,8 +81,6 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
         _chickenAttack = ChickenAttacks.Charge;
 
         Core.Logger.LogInformation("[GigaChicken] Target acquired! Preparing to charge.");
-        _gigaChicken.Render.R = 255;
-
     }
     private void EndCharge(CChicken chicken)
     {
@@ -92,13 +92,9 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
         _isAiming = false;
         _aimTicksRemaining = 0;
         _chargeTicksRemaining = 0;
-
         chicken.DesiredActivity = EChickenActivity.Walk;
-
         _chickenAttack = ChickenAttacks.Idle;
-
         Core.Logger.LogInformation("[GigaChicken] Charge ended.");
-        _gigaChicken!.Render.R = 0;
     }
 
 
@@ -294,6 +290,13 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
             .Take(3)
             .ToList();
 
+
+        foreach (var target in targets)
+        {
+            CreateBombParticle(new Vector3(target.X, target.Y, target.Z), 1, new Vector3(0,0,255));
+        }
+
+
         Core.PlayerManager.SendChat(
             " \x02[GIGA CHICKEN]\x01 Uwaga! Nadlatują jajka!");
 
@@ -407,9 +410,9 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
 
         _chickenAttack = ChickenAttacks.EggBombardment;
 
-        foreach(var target in targets)
+        foreach (var target in targets)
         {
-            CreateParticle(new Vector3(target.X, target.Y, target.Z));
+            CreateBombParticle(new Vector3(target.X, target.Y, target.Z), 1, new Vector3(255,0,0));
         }
 
         Core.PlayerManager.SendChat(
@@ -500,6 +503,8 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
             if (_chickenAttack != ChickenAttacks.GroundWave)
                 return;
 
+
+
             GroundWaveTick(
                 chicken,
                 center,
@@ -532,6 +537,8 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
         float outerSquared = radius * radius;
         float innerSquared = innerRadius * innerRadius;
 
+
+
         foreach (var player in Core.PlayerManager.GetAlive())
         {
             if (!player.IsValid ||
@@ -552,6 +559,8 @@ public sealed partial class HuntDownTheEggs_ChickenMiniBoss_SW
 
             Vector3 offset = pos - center;
             offset.Z = 0;
+
+            CreateParticle(new Vector3(chicken.AbsOrigin!.Value.X, chicken.AbsOrigin!.Value.Y, chicken.AbsOrigin!.Value.Z), 4);
 
             float distanceSquared = offset.LengthSquared();
 
