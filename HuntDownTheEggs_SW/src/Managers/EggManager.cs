@@ -178,7 +178,7 @@ public sealed class EggManager
             _plugin.DebugLog("Failed to create egg prop!");
             return null;
         }
-
+        /*
         if (shoot)
         {
             prop.Collision.CollisionGroup = CollisionWeapon;
@@ -188,6 +188,13 @@ public sealed class EggManager
             prop.TakesDamage = true;
             prop.TakesDamageUpdated();
         }
+        */
+        prop.Collision.CollisionGroup = CollisionWeapon;
+        prop.Collision.CollisionGroupUpdated();
+        prop.Collision.SolidType = SolidType_t.SOLID_VPHYSICS;
+        prop.Collision.SolidTypeUpdated();
+        prop.TakesDamage = true;
+        prop.TakesDamageUpdated();
 
         var render = ResolveColor(color);
 
@@ -232,7 +239,7 @@ public sealed class EggManager
 
         _byProp[prop.Index] = inst;
 
-        if (!shoot) CreateTrigger(inst, pos);
+        if (cfg.ModesSetup.PickUpMode) CreateTrigger(inst, pos);
 
         return inst;
     }

@@ -1,4 +1,3 @@
-using HuntDownTheEggs;
 using SwiftlyS2.Shared.SchemaDefinitions;
 public enum EggKind { Placed, Kill, Random }
 public sealed class EggInstance

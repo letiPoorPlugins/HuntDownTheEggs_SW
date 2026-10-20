@@ -1,11 +1,6 @@
 using HuntDownTheEggs;
 using SwiftlyS2.Shared;
-using SwiftlyS2.Shared.Events;
-using SwiftlyS2.Shared.GameEventDefinitions;
-using SwiftlyS2.Shared.GameHooks;
-using SwiftlyS2.Shared.Misc;
 using SwiftlyS2.Shared.Players;
-using SwiftlyS2.Shared.SchemaDefinitions;
 using HuntDownTheEggs.Api;
 
 namespace HuntDownTheEggsEggs;

@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://pan.samyyc.dev/s/VYmMXE" />
   <h2><strong>HuntDownTheEggs_ChickenMiniBoss_SW</strong></h2>
-  <h3>HuntDownTheEggs_ChickenMiniBoss_SW</h3>
+  <h3>HuntDownTheEggs_ChickenMiniBoss_SW - WIP AI SLOP</h3>
 </div>
 
 <p align="center">

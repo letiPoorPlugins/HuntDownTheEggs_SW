@@ -1,7 +1,4 @@
 namespace HuntDownTheEggs;
-
-// UWAGA: Microsoft.Extensions.Configuration.Binder ignoruje [JsonPropertyName],
-// dlatego nazwy właściwości = nazwy kluczy w config.jsonc.
 public sealed class PluginConfig
 {
     public string DatabaseConnection { get; set; } = "default";
@@ -15,7 +12,6 @@ public sealed class PluginConfig
 
 public sealed class EggSetup
 {
-    /// <summary>Uprawnienie SwiftlyS2 (dawniej flaga CSS "@egg/root").</summary>
     public string EggRootPermission { get; set; } = "hdte.root";
     public string EggModel { get; set; } = "models/chicken/chicken.vmdl";
     public string TriggerModel { get; set; } = "models/chicken/chicken.vmdl";
@@ -35,6 +31,7 @@ public sealed class ModesSetup
     public bool SpawnEggsOnWarmup { get; set; } = false;
     public bool DeathMode { get; set; } = true;
     public bool SearchMode { get; set; } = true;
+    public bool PickUpMode {get; set; } = true;
     public bool ShootEggMode { get; set; } = true;
     public int ShootEggHealth { get; set; } = 100;
     public bool SpawnDeathEggOnVictim { get; set; } = true;
