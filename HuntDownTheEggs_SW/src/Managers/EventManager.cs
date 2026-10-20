@@ -4,9 +4,7 @@ using SwiftlyS2.Shared.Events;
 using SwiftlyS2.Shared.GameEventDefinitions;
 using SwiftlyS2.Shared.GameHooks;
 using SwiftlyS2.Shared.Misc;
-using SwiftlyS2.Shared.Players;
 using SwiftlyS2.Shared.SchemaDefinitions;
-using HuntDownTheEggs.Api;
 
 namespace HuntDownTheEggsEggs;
 
@@ -152,7 +150,8 @@ public sealed partial class EventManager(HuntDownTheEggsPlugin plugin, ISwiftlyC
 
     private void OnTriggerTouch(IOnEntityFireOutputHookEvent e)
     {
-        if (_plugin.Config.ModesSetup.ShootEggMode) return;
+        if(!_plugin.Config.ModesSetup.PickUpMode) return;
+        //if (_plugin.Config.ModesSetup.ShootEggMode) return;
 
         var activator = e.Activator?.As<CBaseEntity>();
         if (activator == null || activator.DesignerName != "player") return;

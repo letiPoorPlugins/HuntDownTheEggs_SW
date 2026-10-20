@@ -1,7 +1,6 @@
 
 using System.Text.Json;
 using HuntDownTheEggs_SW;
-using Microsoft.Extensions.Logging;
 using SwiftlyS2.Shared;
 using SwiftlyS2.Shared.Natives;
 using SwiftlyS2.Shared.Players;
@@ -9,6 +8,7 @@ using SwiftlyS2.Shared.SchemaDefinitions;
 using DrawingColor = System.Drawing.Color;
 using NativeColor = SwiftlyS2.Shared.Natives.Color;
 using System.Drawing;
+using HuntDownTheEggs.Api;
 namespace HuntDownTheEggs;
 
 public sealed class EggManager
@@ -84,7 +84,7 @@ public sealed class EggManager
         {
             _eggs.Add(new EggData
             {
-                // Wysokość (EggModelHeight) dodaje dopiero SpawnEgg – w oryginale była dodawana podwójnie.
+
                 Id = _eggs.Count,
                 X = pos.X,
                 Y = pos.Y,
@@ -115,6 +115,8 @@ public sealed class EggManager
     public void SpawnAllEggs()
     {
         var cfg = _plugin.Config.ModesSetup;
+
+        if (!_plugin.AllowToSpawnEggs) return;
 
         foreach (var egg in _eggs)
             SpawnEgg(new Vector(egg.X, egg.Y, egg.Z), EggKind.Placed, egg.ModelColor, egg.Id);
@@ -176,7 +178,7 @@ public sealed class EggManager
             _plugin.DebugLog("Failed to create egg prop!");
             return null;
         }
-
+        /*
         if (shoot)
         {
             prop.Collision.CollisionGroup = CollisionWeapon;
@@ -186,6 +188,13 @@ public sealed class EggManager
             prop.TakesDamage = true;
             prop.TakesDamageUpdated();
         }
+        */
+        prop.Collision.CollisionGroup = CollisionWeapon;
+        prop.Collision.CollisionGroupUpdated();
+        prop.Collision.SolidType = SolidType_t.SOLID_VPHYSICS;
+        prop.Collision.SolidTypeUpdated();
+        prop.TakesDamage = true;
+        prop.TakesDamageUpdated();
 
         var render = ResolveColor(color);
 
@@ -230,7 +239,7 @@ public sealed class EggManager
 
         _byProp[prop.Index] = inst;
 
-        if (!shoot) CreateTrigger(inst, pos);
+        if (cfg.ModesSetup.PickUpMode) CreateTrigger(inst, pos);
 
         return inst;
     }
@@ -436,17 +445,56 @@ public sealed class EggManager
         if (type == null) return;
 
         var typeCfg = prizeCfg.PresentTypes[type];
-        if (typeCfg.Rewards.Count == 0) return;
-        var reward = typeCfg.Rewards.ElementAt(_random.Next(typeCfg.Rewards.Count));
 
-        player.SendChat($"{prefix}[{typeCfg.Color}]{l["hdte.received_prize", reward.Key, type]}");
+        var candidates = typeCfg.Rewards.Select(r => new PrizeCandidate(r.Key, r.Value, null)).ToList();
 
-        var descKey = "hdte.received_desc." + reward.Key.Replace(" ", "_");
+        var moduleRewards = _plugin.Api.GetPrizeRewards(type);
+
+        candidates.AddRange(moduleRewards.Select(r =>
+            new PrizeCandidate(r.RewardName, r.RewardValue, r)));
+
+        if (candidates.Count == 0)
+            return;
+
+        // Losujemy dokładnie jedną nagrodę z połączonej puli.
+        var reward = candidates[_random.Next(candidates.Count)];
+
+        bool success;
+
+        if (reward.ModuleReward is { } moduleReward)
+        {
+            success = _plugin.Api.TryGivePrize(
+                moduleReward,
+                player.SteamID,
+                player.Controller.PlayerName);
+        }
+        else
+        {
+            _core.Engine.ExecuteCommand(_plugin.Helper.ReplacePlayerParameters(reward.Value, player));
+            success = true;
+        }
+
+        if (!success)
+        {
+            _plugin.DebugLog(
+                $"Failed to give prize '{reward.Name}' from type '{type}'.");
+            return;
+        }
+
+        player.SendChat(
+            $"{prefix}[{typeCfg.Color}]" +
+            $"{l["hdte.received_prize", reward.Name, type]}");
+
+        var descKey = "hdte.received_desc." +
+                      reward.Name.Replace(" ", "_");
+
         var desc = l[descKey];
-        if (!string.IsNullOrEmpty(desc) && desc != descKey) player.SendChat(prefix + desc);
 
-        _core.Engine.ExecuteCommand(_plugin.Helper.ReplacePlayerParameters(reward.Value, player));
+        if (!string.IsNullOrEmpty(desc) && desc != descKey)
+            player.SendChat(prefix + desc);
     }
+
+    private sealed record PrizeCandidate(string Name, string Value, RegisteredPrizeReward? ModuleReward);
 
 
 }

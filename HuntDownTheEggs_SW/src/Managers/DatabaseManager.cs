@@ -4,15 +4,16 @@ using Microsoft.Extensions.Logging;
 using SwiftlyS2.Shared;
 
 namespace HuntDownTheEggs;
-
-/// <summary>
-/// Te same tabele i zapytania co w wersji CSS (EggHunt / EggKills / EggRandom), więc istniejące dane działają bez migracji.
-/// Połączenie bierzemy z Core.Database (database.jsonc SwiftlyS2) zamiast własnych DBHost/DBPassword w configu.
-/// </summary>
 public sealed class DatabaseManager
 {
     private readonly HuntDownTheEggsPlugin _plugin;
     private readonly ISwiftlyCore _core;
+
+    private readonly SemaphoreSlim _writeLock = new(1, 1);
+
+    private const string PlacedCount =
+        "CASE WHEN EggID IS NULL OR EggID = '' THEN 0 " +
+        "ELSE LENGTH(EggID) - LENGTH(REPLACE(EggID, ',', '')) + 1 END";
 
     public DatabaseManager(HuntDownTheEggsPlugin plugin, ISwiftlyCore core)
     {
@@ -27,16 +28,21 @@ public sealed class DatabaseManager
         try
         {
             using var conn = Open();
-            conn.Execute("CREATE TABLE IF NOT EXISTS EggHunt(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggID VARCHAR(255));");
-            conn.Execute("CREATE TABLE IF NOT EXISTS EggKills(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggsPicked INT);");
-            conn.Execute("CREATE TABLE IF NOT EXISTS EggRandom(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggsPicked INT);");
-            _core.Logger.LogInformation("HuntDownTheEggs: database ready (connection '{Name}')", _plugin.Config.DatabaseConnection);
+            conn.Execute("CREATE TABLE IF NOT EXISTS EggHunt(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggID VARCHAR(255))");
+            conn.Execute("CREATE TABLE IF NOT EXISTS EggKills(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggsPicked INT)");
+            conn.Execute("CREATE TABLE IF NOT EXISTS EggRandom(SteamID VARCHAR(255), Name VARCHAR(255), Map VARCHAR(255), EggsPicked INT)");
+
+            var info = _core.Database.GetConnectionInfo(_plugin.Config.DatabaseConnection);
+            _core.Logger.LogInformation(
+                "HuntDownTheEggs: database ready (connection '{Name}', driver '{Driver}')",
+                _plugin.Config.DatabaseConnection, info.Driver);
         }
         catch (Exception ex)
         {
             _core.Logger.LogError(ex, "HuntDownTheEggs: error while initializing database");
         }
     }
+
 
     public async Task<PlayerData?> GetPlayerEggsAsync(ulong steamId, string mapName)
     {
@@ -46,17 +52,26 @@ public sealed class DatabaseManager
             var sid = steamId.ToString();
 
             var eggIds = await conn.QueryFirstOrDefaultAsync<string>(
-                "SELECT EggID FROM EggHunt WHERE SteamID = @sid AND Map = @mapName", new { sid, mapName });
+                "SELECT EggID FROM EggHunt WHERE SteamID = @sid AND Map = @mapName",
+                new { sid, mapName });
 
             var totalEggs = await conn.QueryFirstOrDefaultAsync<int>(
-                "SELECT COALESCE(SUM(LENGTH(eh.EggID) - LENGTH(REPLACE(eh.EggID, ',', '')) + 1), 0) AS TotalEggs " +
-                "FROM EggHunt eh WHERE eh.SteamID = @sid", new { sid });
+                $@"SELECT
+                   (SELECT COALESCE(SUM({PlacedCount}), 0) FROM EggHunt WHERE SteamID = @sid)
+                   +
+                   (SELECT COALESCE(SUM(EggsPicked), 0) FROM EggKills WHERE SteamID = @sid)
+                   +
+                   (SELECT COALESCE(SUM(EggsPicked), 0) FROM EggRandom WHERE SteamID = @sid)
+                   AS TotalEggs",
+                new { sid });
 
             var killEggs = await conn.QueryFirstOrDefaultAsync<int>(
-                "SELECT COALESCE(EggsPicked, 0) FROM EggKills WHERE SteamID = @sid AND Map = @mapName", new { sid, mapName });
+                "SELECT COALESCE(EggsPicked, 0) FROM EggKills WHERE SteamID = @sid AND Map = @mapName",
+                new { sid, mapName });
 
             var randomEggs = await conn.QueryFirstOrDefaultAsync<int>(
-                "SELECT COALESCE(EggsPicked, 0) FROM EggRandom WHERE SteamID = @sid AND Map = @mapName", new { sid, mapName });
+                "SELECT COALESCE(EggsPicked, 0) FROM EggRandom WHERE SteamID = @sid AND Map = @mapName",
+                new { sid, mapName });
 
             var eggs = eggIds?
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -82,6 +97,7 @@ public sealed class DatabaseManager
 
     public async Task SavePlayerEggsAsync(PlayerData d)
     {
+        await _writeLock.WaitAsync();
         try
         {
             using var conn = Open();
@@ -128,58 +144,156 @@ public sealed class DatabaseManager
         {
             _core.Logger.LogError(ex, "HuntDownTheEggs: error while saving player {SteamId}", d.SteamId);
         }
+        finally
+        {
+            _writeLock.Release();
+        }
     }
 
-    public async Task<Dictionary<string, int>> GetTopEggsAsync()
+
+    // TOP 5 on current map
+
+    public Task<Dictionary<string, int>> GetTopEggsPerMapAsync(string mapName) => GetTopPlacedEggsAsync(mapName);
+
+    public Task<Dictionary<string, int>> GetTopKillEggsPerMapAsync(string mapName) => GetTopCountEggsAsync("EggKills", mapName);
+
+    public Task<Dictionary<string, int>> GetTopRandomEggsPerMapAsync(string mapName) => GetTopCountEggsAsync("EggRandom", mapName);
+
+    public Task<Dictionary<string, int>> GetTopAllEggsPerMapAsync(string mapName) => GetTopCombinedEggsAsync(mapName);
+
+
+    // TOP 5 from all maps
+
+    public Task<Dictionary<string, int>> GetTopPlacedEggsAsync() => GetTopPlacedEggsAsync(null);
+
+    public Task<Dictionary<string, int>> GetTopKillEggsAsync() => GetTopCountEggsAsync("EggKills", null);
+
+    public Task<Dictionary<string, int>> GetTopRandomEggsAsync() => GetTopCountEggsAsync("EggRandom", null);
+
+    public Task<Dictionary<string, int>> GetTopAllEggsAsync() => GetTopCombinedEggsAsync(null);
+
+    private static string MapFilter(string? mapName) => mapName == null ? "" : "WHERE Map = @mapName";
+    private async Task<Dictionary<string, int>> GetTopPlacedEggsAsync(string? mapName)
     {
         try
         {
             using var conn = Open();
-            var rows = await conn.QueryAsync<(string Name, int TotalEggs)>(
-                @"SELECT `Name`, SUM(LENGTH(EggID) - LENGTH(REPLACE(EggID, ',', '')) + 1) AS TotalEggs
-                  FROM `EggHunt`
-                  WHERE `EggID` IS NOT NULL AND `EggID` <> ''
-                  GROUP BY `SteamID`, `Name`
-                  ORDER BY TotalEggs DESC
-                  LIMIT 5;");
+
+            var rows = await conn.QueryAsync<TopRow>(
+                $@"SELECT Name, Cnt FROM (
+                       SELECT MAX(Name) AS Name, SUM({PlacedCount}) AS Cnt
+                       FROM EggHunt
+                       {MapFilter(mapName)}
+                       GROUP BY SteamID
+                   ) t
+                   WHERE Cnt > 0
+                   ORDER BY Cnt DESC
+                   LIMIT 5",
+                new { mapName });
+
             return ToDict(rows);
         }
         catch (Exception ex)
         {
-            _core.Logger.LogError(ex, "HuntDownTheEggs: error while loading top eggs");
+            _core.Logger.LogError(ex, "Error loading placed egg leaderboard");
             return [];
         }
     }
 
-    public Task<Dictionary<string, int>> GetTopKillEggsAsync(string map) => GetTopAsync("EggKills", map);
-    public Task<Dictionary<string, int>> GetTopRandomEggsAsync(string map) => GetTopAsync("EggRandom", map);
 
-    private async Task<Dictionary<string, int>> GetTopAsync(string table, string map)
+    private async Task<Dictionary<string, int>> GetTopCountEggsAsync(string table, string? mapName)
     {
+        // Nazwa tabeli trafia do SQL-a, więc tylko z białej listy.
+        if (table != "EggKills" && table != "EggRandom")
+            return [];
+
         try
         {
             using var conn = Open();
-            var rows = await conn.QueryAsync<(string Name, int EggsPicked)>(
-                $"SELECT `Name`, `EggsPicked` FROM `{table}` WHERE `Map` = @map ORDER BY `EggsPicked` DESC LIMIT 5;",
-                new { map });
+
+            var rows = await conn.QueryAsync<TopRow>(
+                $@"SELECT Name, Cnt FROM (
+                       SELECT MAX(Name) AS Name, SUM(COALESCE(EggsPicked, 0)) AS Cnt
+                       FROM {table}
+                       {MapFilter(mapName)}
+                       GROUP BY SteamID
+                   ) t
+                   WHERE Cnt > 0
+                   ORDER BY Cnt DESC
+                   LIMIT 5",
+                new { mapName });
+
             return ToDict(rows);
         }
         catch (Exception ex)
         {
-            _core.Logger.LogError(ex, "HuntDownTheEggs: error while loading top list from {Table}", table);
+            _core.Logger.LogError(ex, "Error loading leaderboard from {Table}", table);
+            return [];
+        }
+    }
+
+
+    private async Task<Dictionary<string, int>> GetTopCombinedEggsAsync(string? mapName)
+    {
+        try
+        {
+            using var conn = Open();
+            var filter = MapFilter(mapName);
+
+            var rows = await conn.QueryAsync<TopRow>(
+                $@"SELECT Name, Cnt FROM (
+                       SELECT MAX(Name) AS Name, SUM(EggCount) AS Cnt
+                       FROM (
+                           SELECT SteamID, MAX(Name) AS Name, SUM({PlacedCount}) AS EggCount
+                           FROM EggHunt
+                           {filter}
+                           GROUP BY SteamID
+
+                           UNION ALL
+
+                           SELECT SteamID, MAX(Name) AS Name, SUM(COALESCE(EggsPicked, 0)) AS EggCount
+                           FROM EggKills
+                           {filter}
+                           GROUP BY SteamID
+
+                           UNION ALL
+
+                           SELECT SteamID, MAX(Name) AS Name, SUM(COALESCE(EggsPicked, 0)) AS EggCount
+                           FROM EggRandom
+                           {filter}
+                           GROUP BY SteamID
+                       ) AS EggStats
+                       GROUP BY SteamID
+                   ) t
+                   WHERE Cnt > 0
+                   ORDER BY Cnt DESC
+                   LIMIT 5",
+                new { mapName });
+
+            return ToDict(rows);
+        }
+        catch (Exception ex)
+        {
+            _core.Logger.LogError(ex, "Error loading combined egg leaderboard");
             return [];
         }
     }
 
     private static Task<bool> ExistsAsync(IDbConnection conn, string table, string sid, string map) =>
-        conn.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(1) FROM `{table}` WHERE SteamID = @sid AND Map = @map", new { sid, map })
+        conn.QueryFirstOrDefaultAsync<int>(
+                $"SELECT COUNT(1) FROM {table} WHERE SteamID = @sid AND Map = @map", new { sid, map })
             .ContinueWith(t => t.Result > 0);
 
-    // Oryginał używał ToDictionary – przy dwóch graczach o tym samym nicku rzucało wyjątek. Tu: ostatni wygrywa.
-    private static Dictionary<string, int> ToDict(IEnumerable<(string Name, int Count)> rows)
+    private sealed class TopRow
+    {
+        public string Name { get; set; } = string.Empty;
+        public decimal Cnt { get; set; }
+    }
+
+    private static Dictionary<string, int> ToDict(IEnumerable<TopRow> rows)
     {
         var d = new Dictionary<string, int>();
-        foreach (var (name, count) in rows) d[name] = count;
+        foreach (var r in rows) d[r.Name] = (int)r.Cnt;
         return d;
     }
 }

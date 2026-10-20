@@ -7,9 +7,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AssemblyName>HuntDownTheEggs_ApiTest_SW</AssemblyName>
+    <AssemblyName>HuntDownTheEggs_ShopCorePoints_SW</AssemblyName>
     <OutputPath>$(MSBuildThisFileDirectory)build/</OutputPath>
-    <PublishDir>$(OutputPath)publish/HuntDownTheEggs_ApiTest_SW</PublishDir>
+    <PublishDir>$(OutputPath)publish/HuntDownTheEggs_ShopCorePoints_SW</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,8 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../HuntDownTheEggs_SW.Contract/HuntDownTheEggs_SW.Contract.csproj" />
+    <ProjectReference Include="../../HuntDownTheEggs_SW.Contract/HuntDownTheEggs_SW.Contract.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../differentContracts/ShopCore.Contract/ShopCore.Contract.csproj" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <Content Include="resources/gamedata/**/*;resources/templates/**/*;resources/translations/**/*">
