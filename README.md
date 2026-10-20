@@ -59,8 +59,6 @@
 > [!CAUTION]
 > In theory plugin should work with all types of databases, but only MySQL was tested.
 
-<details>
-<summary>Example config</summary>
 ```json
 {
   "HuntDownTheEggs": {
@@ -167,7 +165,7 @@
   }
 }
 ```
-</details>
+
 
 > [!TIP]
 > Reward descriptions support dynamic translations. To add a custom description, add a new entry to lang/*language*.json using the key format recievedDesc.Reward_Name. Replace spaces in the reward name with underscores (_). Example: For a reward named Punkty sklepu, add the following entry:
