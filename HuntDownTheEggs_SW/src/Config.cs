@@ -13,10 +13,10 @@ public sealed class PluginConfig
 public sealed class EggSetup
 {
     public string EggRootPermission { get; set; } = "hdte.root";
-    public string EggModel { get; set; } = "models/chicken/chicken.vmdl";
-    public string TriggerModel { get; set; } = "models/chicken/chicken.vmdl";
-    public string EggAnimation { get; set; } = "challenge_coin_idle";
-    public string EggCollectAnimation { get; set; } = "challenge_coin_collect";
+    public string EggModel { get; set; } = "models/huntdowntheeggs/pumpkin.vmdl";
+    public string TriggerModel { get; set; } = "models/huntdowntheeggs/pumpkin.vmdl";
+    public string EggAnimation { get; set; } = "huntdowntheEggs_rotateAction";
+    public string EggCollectAnimation { get; set; } = "huntdowntheEggs_collect";
     public float EggModelHeight { get; set; } = 0;
     public float EggModelScale { get; set; } = 1;
     public bool Glowing { get; set; } = true;
