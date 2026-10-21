@@ -23,11 +23,12 @@
 - [Swiftly2](https://swiftlys2.net/)
 
 ## [🛠️] Base Setup
-- Download latest [release](https://github.com/Letaryat/HuntDownTheEggs/releases)
-- Drag files to /plugins/
-- Restart your server
+- Download latest [release](https://github.com/letiPoorPlugins/HuntDownTheEggs_SW/releases)
+- Drag files to /plugins/,
+- Restart your server,
 - Config file should be created in configs/plugins/HuntDownTheEggs,
-- After setting up the database restart your server again
+- Configure to your liking,
+- Restart server
 
 ## [⚙️] Commands
 
